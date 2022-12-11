@@ -4,6 +4,7 @@ import plotly.graph_objs as go
 import plotly.express as px
 import os
 import webbrowser
+import easygui as g
 
 
 pitch_colors = {
@@ -77,7 +78,6 @@ def validate_data(df: pd.DataFrame) -> bool:
 
 
 def get_data() -> (pd.DataFrame, pd.DataFrame):
-    # filename = g.fileopenbox('Choose Source Data.', filetypes="*.csv")
     filename = "C:\\Users\\eamas\\source\\ML_Datasets\\Rapsodo\\test.csv"
     if filename == "":
         return None
@@ -92,9 +92,7 @@ def get_data() -> (pd.DataFrame, pd.DataFrame):
 def clean_data(df: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     df = calculated_columns(df)
 
-    avg_df = session_avg(df)
-
-    return df, avg_df
+    return df
 
 
 def calculated_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -102,25 +100,6 @@ def calculated_columns(df: pd.DataFrame) -> pd.DataFrame:
     df["pitch_start_x"] = df["pitch_horizontal_offset"] + df['Horizontal_Break_Inches']
 
     return df
-
-
-def session_avg(df: pd.DataFrame) -> pd.DataFrame:
-    cols_use = [x for x in baseball_cols if
-                x not in ['Date', 'Athlete_Name', 'Spin_Direction', 'Pitch_Type', 'Pitch_Count', 'Strike']]
-
-    for i in range(len(cols_use)):
-        cur_col = cols_use[i]
-
-        if i == 0:
-            df_out = var_stat(df, cur_col)
-        else:
-            df_out = df_out.join(
-                var_stat(df, cur_col),
-                #on=['Date', 'Athelete_Name', 'Pitch_Type'],
-                how="inner"
-            )
-
-    return df_out
 
 
 def var_stat(df: pd.DataFrame, col: str) -> pd.DataFrame:
@@ -175,7 +154,7 @@ def plot_break_graph(df: pd.DataFrame, pitches_selected, agg_method, agg_label, 
         .groupby(['Date', 'Pitch_Type', 'Athlete_Name'])
         .agg(
             hoz_use_val = ('Horizontal_Break_Inches', agg_method),
-            vert_use_val = ('Horizontal_Break_Inches', agg_method),
+            vert_use_val = ('Vertical_Break_Inches', agg_method),
         )
         .rename(columns={'hoz_use_val': f'{agg_label} Horizontal Break'})
         .rename(columns={'vert_use_val': f'{agg_label} Vertical Break'})

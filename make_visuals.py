@@ -1,7 +1,6 @@
 import dash
 import pandas as pd
 import numpy as np
-import easygui as g
 import plotly.express as px
 import plotly.graph_objs as go
 from dash import Dash, html, dcc, Input, Output
@@ -13,13 +12,12 @@ from functions import *
 template_use = "flatly"
 load_figure_template(["flatly"])
 
-
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
 app.title = "Baseball Data Analytics Dashboard"
-data, avg_data = get_data()
+
+data = get_data()
 data = data.reset_index()
-avg_data = avg_data.reset_index()
 
 agg_meth_dict = {
     'Mean': np.mean,
@@ -98,8 +96,6 @@ def output_true_spin(pitch_types, agg_label):
 )
 def output_eff_spin(pitch_types, agg_label):
     return plot_eff_spin(data, pitch_types, agg_meth_dict[agg_label], agg_label)
-
-
 
 break_layout = html.Div(
         [
@@ -218,8 +214,8 @@ app.layout = html.Div(
     ]
 )
 
-
 if __name__ == "__main__":
 
     Timer(1, open_browser).start()
     app.run_server(debug=True, port=1222)
+
