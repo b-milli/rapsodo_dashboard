@@ -78,7 +78,7 @@ def validate_data(df: pd.DataFrame) -> bool:
 
 
 def get_data() -> (pd.DataFrame, pd.DataFrame):
-    filename = "C:\\Users\\eamas\\source\\ML_Datasets\\Rapsodo\\test.csv"
+    filename = "pitch_database.csv"
     if filename == "":
         return None
 
@@ -98,6 +98,8 @@ def clean_data(df: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
 def calculated_columns(df: pd.DataFrame) -> pd.DataFrame:
     df["pitch_start_y"] = df["pitch_vertical_offset"] + df['Vertical_Break_Inches']
     df["pitch_start_x"] = df["pitch_horizontal_offset"] + df['Horizontal_Break_Inches']
+
+    df['Date'] = pd.to_datetime(df['Date'])
 
     return df
 
@@ -211,9 +213,6 @@ def highlight_plot_break(df: pd.DataFrame, pitches_selected, cust_data=None, tem
         return blank_graph("Select a Pitch Type")
 
     pitches_selected = sorted(pitches_selected)
-
-    tmp_dfs_yes_dates = {}
-    tmp_dfs_no_dates = {}
 
     if cust_data is None:
         tmp_dfs_yes_dates = df.loc[(df['Pitch_Type'].isin(pitches_selected)), :]
